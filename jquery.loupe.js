@@ -2,6 +2,8 @@
  * loupe - an image magnifier for jQuery
  * (C) 2010 jdbartlett, MIT license
  * http://github.com/jdbartlett/loupe
+ *
+ * @updates: Ivaylo (Evo) Stamatov 2012-08
  */
 (function ($) {
 	$.fn.loupe = function (arg) {
