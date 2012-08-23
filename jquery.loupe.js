@@ -16,11 +16,28 @@
 		return this.length ? this.each(function () {
 			var $this = $(this), $big, $loupe,
 				$small = $this.is('img') ? $this : $this.find('img:first'),
+				$trigger = $this.siblings('.trigger'),
+				$clicker = $this.parent('a'),
 				move, hide = function () { $loupe.hide(); },
 				time;
 
+			if (!$trigger.length)
+				$trigger = $this;
+
 			if ($this.data('loupe') != null) {
 				return $this.data('loupe', arg);
+			}
+
+			fakeclick = function(e, target) {
+				if (!target) return;
+				while (target.nodeType != 1) { target = target.parentNode; }
+				var ev = document.createEvent('MouseEvents');
+				ev.initMouseEvent('click', true, true, e.view, 1,
+					target.screenX, target.screenY, target.clientX, target.clientY,
+					e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
+					0, null);
+				ev.__fakeClick__ = true;
+				target.dispatchEvent(ev);
 			}
 
 			move = function (e) {
@@ -58,10 +75,12 @@
 				})
 				.append($big = $('<img />').attr('src', $this.attr($this.is('img') ? 'src' : 'href')).css('position', 'absolute'))
 				.mousemove(move)
+				.click(function(e) { if ($clicker.length) fakeclick(e, $clicker.get(0)); })
 				.hide()
 				.appendTo('body');
 
-			$this.data('loupe', true)
+			$this.data('loupe', true);
+			$trigger.data('loupe', true)
 				.mouseenter(move)
 				.mouseout(function () {
 					time = setTimeout(hide, 10);
